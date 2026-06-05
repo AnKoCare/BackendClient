@@ -111,7 +111,9 @@ namespace GameBackendModule.Services
                 try
                 {
                     string responseText = request.downloadHandler.text;
+#if UNITY_EDITOR
                     Debug.Log($"HTTP {method} {url} -> {(int)request.responseCode}\nBody: {responseText}");
+#endif
 
                     // JSON literal `null` (vd. GET /leaderboard/rank khi không có rank)
                     if (string.Equals(responseText?.Trim(), "null", StringComparison.Ordinal)
@@ -144,7 +146,9 @@ namespace GameBackendModule.Services
                         try { parsed = JsonUtility.FromJson<T>(responseText); }
                         catch (Exception innerEx)
                         {
+#if UNITY_EDITOR
                             Debug.LogError($"Error fallback parsing body to {typeof(T).Name}: {innerEx.Message}");
+#endif
                         }
 
                         if (!EqualityComparer<T>.Default.Equals(parsed, default(T)))
@@ -181,7 +185,9 @@ namespace GameBackendModule.Services
                 }
                 catch (Exception ex)
                 {
+#if UNITY_EDITOR
                     Debug.LogError($"Error parsing response: {ex.Message}");
+#endif
                     ErrorResponse errorResponse = new ErrorResponse
                     {
                         success = false,
@@ -197,7 +203,9 @@ namespace GameBackendModule.Services
                 try
                 {
                     string errorText = request.downloadHandler.text;
+#if UNITY_EDITOR
                     Debug.LogError($"HTTP {method} {url} FAILED -> {(int)request.responseCode} {request.error}\nBody: {errorText}");
+#endif
 					ErrorResponse errorResponse = JsonUtility.FromJson<ErrorResponse>(errorText);
                     errorResponse.statusCode = (int)request.responseCode;
 					errorResponse.responseDate = responseDateHeader;
@@ -205,7 +213,9 @@ namespace GameBackendModule.Services
                 }
                 catch (Exception ex)
                 {
+#if UNITY_EDITOR
                     Debug.LogError($"Error parsing error response: {ex.Message}");
+#endif
 					ErrorResponse errorResponse = new ErrorResponse
                     {
                         success = false,
