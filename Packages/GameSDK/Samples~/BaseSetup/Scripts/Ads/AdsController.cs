@@ -48,8 +48,6 @@ public class AdsController : Singleton<AdsController>
 
     private void ClearEvent()
     {
-        EventShowAdsInter = null;
-        EventShowAdsReward = null;
         EventShowBanner = null;
         EventHideBanner = null;
     }
@@ -57,15 +55,11 @@ public class AdsController : Singleton<AdsController>
     public void AddEvent()
     {
         ClearEvent();
-        EventShowAdsInter += ShowAdsInter;
-        EventShowAdsReward += ShowAdsReward;
         EventShowBanner += ShowBanner;
         EventHideBanner += HideBanner;
     }
     public void RemoveEvent()
     {
-        EventShowAdsInter -= ShowAdsInter;
-        EventShowAdsReward -= ShowAdsReward;
         EventShowBanner -= ShowBanner;
         EventHideBanner -= HideBanner;
     }
@@ -85,7 +79,7 @@ public class AdsController : Singleton<AdsController>
     [Button]
     public void ShowAdsReward(Action successAction, Action failAction, Action closeAction, bool isSkipCapping = false, bool isBackfillInter = false, string eventName = "", params AnalyticsParameter[] parameters)
     {
-        AdsManager.Instance.ShowRewardVideo(placementId,
+        AdsManager.Instance.ShowRewardVideo(
         () =>
             {
                 successAction?.Invoke();
