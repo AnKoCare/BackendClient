@@ -119,8 +119,6 @@ public class AdsController : Singleton<AdsController>
     [Button]
     public void ShowAdsInter(Action successAction, Action failAction, Action closeAction, bool isSkipCapping = false, bool isBackfillInter = false, string eventName = "", params AnalyticsParameter[] parameters)
     {
-        SDKDebugLogger.Log($"ShowAdsInter: {placementId}");
-
         // Check Remove Ads
 
         if (!InterReady && !isSkipCapping)

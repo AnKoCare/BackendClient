@@ -136,36 +136,36 @@ namespace SDK
             AppsFlyer.sendEvent(AFInAppEvents.PURCHASE, eventValue);
         }
 
-        // public static void TrackAppsflyerAdRevenue(ImpressionData impressionData)
-        // {
-        //     SDKDebugLogger.Log("TrackAppsflyerAdRevenue " + impressionData.ad_revenue + " " + impressionData.ad_source + " " + impressionData.ad_mediation + " " + impressionData.ad_unit_name + " " + impressionData.ad_format);
-        //     MediationNetwork mediationNetwork = MediationNetwork.ApplovinMax;
-        //     switch (impressionData.ad_mediation)
-        //     {
-        //         case AdsMediationType.MAX:
-        //             {
-        //                 mediationNetwork = MediationNetwork.ApplovinMax;
-        //                 break;
-        //             }
-        //         case AdsMediationType.ADMOB:
-        //             {
-        //                 mediationNetwork = MediationNetwork.GoogleAdMob;
-        //                 break;
-        //             }
-        //         case AdsMediationType.IRONSOURCE:
-        //             {
-        //                 mediationNetwork = MediationNetwork.IronSource;
-        //                 break;
-        //             }
-        //     }
-        //     Dictionary<string, string> additionalParams = new Dictionary<string, string>();
-        //     additionalParams.Add(AdRevenueScheme.COUNTRY, "USA");
-        //     additionalParams.Add(AdRevenueScheme.AD_UNIT, impressionData.ad_unit_name);
-        //     additionalParams.Add(AdRevenueScheme.AD_TYPE, impressionData.ad_format);
-        //     additionalParams.Add(AdRevenueScheme.PLACEMENT, "");
-        //     var logRevenue = new AFAdRevenueData(impressionData.ad_source, mediationNetwork, "USD", impressionData.ad_revenue);
-        //     AppsFlyer.logAdRevenue(logRevenue, additionalParams);
-        // }
+        public static void TrackAppsflyerAdRevenue(ImpressionData impressionData)
+        {
+            SDKDebugLogger.Log("TrackAppsflyerAdRevenue " + impressionData.ad_revenue + " " + impressionData.ad_source + " " + impressionData.ad_mediation + " " + impressionData.ad_unit_name + " " + impressionData.ad_format);
+            MediationNetwork mediationNetwork = MediationNetwork.ApplovinMax;
+            switch (impressionData.ad_mediation)
+            {
+                case AdsMediationType.MAX:
+                    {
+                        mediationNetwork = MediationNetwork.ApplovinMax;
+                        break;
+                    }
+                case AdsMediationType.ADMOB:
+                    {
+                        mediationNetwork = MediationNetwork.GoogleAdMob;
+                        break;
+                    }
+                case AdsMediationType.IRONSOURCE:
+                    {
+                        mediationNetwork = MediationNetwork.IronSource;
+                        break;
+                    }
+            }
+            Dictionary<string, string> additionalParams = new Dictionary<string, string>();
+            additionalParams.Add(AdRevenueScheme.COUNTRY, "USA");
+            additionalParams.Add(AdRevenueScheme.AD_UNIT, impressionData.ad_unit_name);
+            additionalParams.Add(AdRevenueScheme.AD_TYPE, impressionData.ad_format);
+            additionalParams.Add(AdRevenueScheme.PLACEMENT, "");
+            var logRevenue = new AFAdRevenueData(impressionData.ad_source, mediationNetwork, "USD", impressionData.ad_revenue);
+            AppsFlyer.logAdRevenue(logRevenue, additionalParams);
+        }
         public static void TrackCompleteLevel(int level)
         {
             // string eventName = af_completed_level + level;
