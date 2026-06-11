@@ -6,18 +6,17 @@ using UnityEngine;
 
 public class IAPController : Singleton<IAPController>
 {
-    public static Action<string, Action> EventPurchaseIAPProduct { get; set; }
     [field: SerializeField] public List<IAPPackage> IAPPackages { get; set; }
     protected override void Awake()
     {
         base.Awake();
-        EventPurchaseIAPProduct += PurchaseIAPProduct;
+        IAPEventManager.OnPurchase += PurchaseIAPProduct;
     }
     
     
     private void OnDestroy()
     {
-        EventPurchaseIAPProduct -= PurchaseIAPProduct;
+        IAPEventManager.OnPurchase -= PurchaseIAPProduct;
     }
 
     private void Start()
@@ -25,23 +24,23 @@ public class IAPController : Singleton<IAPController>
         Load();
     }
 
-    private void PurchaseIAPProduct(string packageID, Action callback)
+    private void PurchaseIAPProduct(string packageID, Action onSuccess, Action onFailure)
     {
-        OnBuyIAP(packageID, callback, null);
+        OnBuyIAP(packageID, onSuccess, onFailure);
         // InGameAnalyticController.EventTrackIAPClick?.Invoke(packageID, "shop");
     }
     
     private void Load()
     {
         IAPPackages = new List<IAPPackage>();
-        // List<ShopPackageDataConfig> shopPackages = ShopGlobalConfig.Instance.shopPackages;
-        // for (int i = 0; i < shopPackages.Count; i++)
-        // {
-        //     if (shopPackages[i].priceType == PriceType.IAP)
-        //     {
-        //         InitIAPPackage(shopPackages[i].packageId, shopPackages[i].price.ToString(CultureInfo.InvariantCulture));
-        //     }
-        // }
+        List<ShopPackageDataConfig> shopPackages = ShopGlobalConfig.Instance.shopPackages;
+        for (int i = 0; i < shopPackages.Count; i++)
+        {
+            if (shopPackages[i].priceType == PriceType.IAP)
+            {
+                InitIAPPackage(shopPackages[i].packageId, shopPackages[i].price.ToString(CultureInfo.InvariantCulture));
+            }
+        }
     }
     public void InitIAPPackage(string productId, string price)
     {
