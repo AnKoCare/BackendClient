@@ -1,6 +1,6 @@
 {
   "name": "com.antq.event.tracking.sdk",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "displayName": "Event Tracking SDK",
   "description": "Unity SDK t\u00edch h\u1ee3p Event Tracking",
   "unity": "6000.0",
