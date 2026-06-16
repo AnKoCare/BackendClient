@@ -27,7 +27,7 @@ namespace SDK
         [SerializeField] private double m_AdsLoadingCooldown = 0f;
         [SerializeField] private double m_MaxLoadingCooldown = 5f;
         [SerializeField] private double m_InterstitialCappingAdsCooldown = 0;
-        [SerializeField] private double m_MaxInterstitialCappingTime = 30;
+        [SerializeField] private double m_MaxInterstitialCappingTime = 0;
         [SerializeField] private int m_LevelPassToShowInterstitial = 2;
         [SerializeField] private int m_RewardInterruptCountTime = 0;
         [SerializeField] private int m_MaxRewardInterruptCount = 5;
@@ -148,13 +148,14 @@ namespace SDK
 
         private IEnumerator coWaitForFirebaseInitialization()
         {
-            while (!FirebaseRemoteConfigManager.IsReady)
-            {
-                yield return new WaitForEndOfFrame();
-            }
+            // while (!FirebaseRemoteConfigManager.IsReady)
+            // {
+            //     yield return new WaitForEndOfFrame();
+            // }
 
             InitConfig();
             InitAdsMediation();
+            yield break;
         }
 
         private void InitConfig()
@@ -461,8 +462,6 @@ namespace SDK
         private Action m_InterstitialAdShowSuccessCallback;
         private Action m_InterstitialAdShowFailCallback;
 
-        private string m_InterstitialPlacement;
-
         private void SetupInterstitial(AdsMediationType adsMediationType)
         {
             if (adsMediationType != m_SDKSetup.interstitialAdsMediationType) return;
@@ -492,7 +491,7 @@ namespace SDK
 // #endif
         }
 
-        public void ShowInterstitial(string interstitialPlacement, Action showSuccessCallback = null, Action closedCallback = null,
+        public void ShowInterstitial(Action showSuccessCallback = null, Action closedCallback = null,
             Action showFailCallback = null,
             bool isTracking = true, bool isSkipCapping = false)
         {
@@ -503,17 +502,6 @@ namespace SDK
                 return;
             }
 
-            if (!isSkipCapping)
-            {
-                if (m_InterstitialCappingAdsCooldown > 0)
-                {
-                    showSuccessCallback?.Invoke();
-                    closedCallback?.Invoke();
-                    return;
-                }
-            }
-
-            m_InterstitialPlacement = interstitialPlacement;
             m_InterstitialAdShowSuccessCallback = showSuccessCallback;
             m_InterstitialAdShowFailCallback = showFailCallback;
             m_InterstitialAdCloseCallback = closedCallback;
@@ -551,7 +539,7 @@ namespace SDK
         {
             IsShowingAds = true;
 
-            GetSelectedMediation(AdsType.INTERSTITIAL).ShowInterstitialAd(OnInterstitialAdShowSuccess, OnInterstitialAdShowFail, m_InterstitialPlacement);
+            GetSelectedMediation(AdsType.INTERSTITIAL).ShowInterstitialAd(OnInterstitialAdShowSuccess, OnInterstitialAdShowFail);
         }
 
         public bool IsInterstitialAdLoaded()
@@ -958,8 +946,6 @@ namespace SDK
         private Action m_RewardedVideoShowStartCallback;
         private Action m_RewardedVideoShowFailCallback;
 
-        private string m_RewardedPlacement;
-
         // Reward Video Setup
         private void SetupRewardVideo(AdsMediationType adsMediationType)
         {
@@ -988,19 +974,17 @@ namespace SDK
             // GetSelectedMediation(AdsType.REWARDED).RequestRewardVideoAd();
         }
 
-        public void ShowRewardVideo(string rewardedPlacement, Action successCallback,
-            Action closedCallback = null, Action failedCallback = null)
+        public void ShowRewardVideo(Action successAction = null, Action closeAction = null, Action failedAction = null)
         {
             if (IsCheatAds)
             {
-                successCallback?.Invoke();
+                successAction?.Invoke();
                 return;
             }
 
-            m_RewardedPlacement = rewardedPlacement;
-            m_RewardedVideoEarnSuccessCallback = successCallback;
-            m_RewardedVideoShowFailCallback = failedCallback;
-            m_RewardedVideoCloseCallback = closedCallback;
+            m_RewardedVideoEarnSuccessCallback = successAction;
+            m_RewardedVideoShowFailCallback = failedAction;
+            m_RewardedVideoCloseCallback = closeAction;
             // AnalyticsManager.TrackAdsReward_ClickOnButton();
             if (IsRemoveAds && IsLinkRewardWithRemoveAds)
             {
@@ -1011,11 +995,11 @@ namespace SDK
                 if (m_IsActiveInterruptReward && IsReadyToShowRewardInterrupt() && IsInterstitialAdLoaded())
                 {
                     MarkShowingAds(true);
-                    ShowInterstitial(m_InterstitialPlacement, null, () =>
+                    ShowInterstitial(null, () =>
                     {
-                        successCallback();
+                        successAction?.Invoke();
                         ResetRewardInterruptCount();
-                    }, failedCallback, false, true);
+                    }, failedAction, false, true);
                 }
                 else
                 {
@@ -1413,7 +1397,6 @@ namespace SDK
                     if (IsReadyToShowInterstitial())
                     {
                         ShowInterstitial(
-                            m_InterstitialPlacement,
                             CloseLoadingPanel,
                             CloseLoadingPanel,
                             CloseLoadingPanel);
@@ -1488,7 +1471,7 @@ namespace SDK
             SDKDebugLogger.Log("Paid Ad Revenue - Ads Type = " + impressionData.ad_type);
             AnalyticsManager.TrackAdImpression(impressionData);
 #if UNITY_APPSFLYER
-            // AppsFlyerManager.TrackAppsflyerAdRevenue(impressionData);
+            AppsFlyerManager.TrackAppsflyerAdRevenue(impressionData);
 #endif
         }
 

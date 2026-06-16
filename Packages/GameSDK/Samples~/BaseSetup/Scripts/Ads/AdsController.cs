@@ -12,8 +12,6 @@ using UnityEngine.Events;
 
 public class AdsController : Singleton<AdsController>
 {
-    public static Action<string, Action, Action, Action, bool, bool> EventShowAdsInter { get; set; }
-    public static Action<string, Action, Action, Action> EventShowAdsReward { get; set; }
     public static Action EventShowBanner { get; set; }
     public static Action EventHideBanner { get; set; }
     public static bool IsRemoveAds {get; private set;}
@@ -28,27 +26,28 @@ public class AdsController : Singleton<AdsController>
     {
         base.Awake();
         AddEvent();
+
+        Initialize();
     }
     private void OnDestroy()
     {
         RemoveEvent();
     }
+
     public void Initialize()
     {
-        // RemoveAds = InGameDataManager.Instance.InGameData.ResourceDataSave.GetReactiveValue(SpecialResourceType.NoAds);
-        // RemoveAds.ReactiveProperty.Subscribe(CheckRemoveAds).AddTo(this);
-        // if(GameManager.Instance.BuildType == BuildType.Cheat)
-        // {
-        //     RemoveAds.Value = 1;
-        //     CheckRemoveAds(RemoveAds.Value);
-        // }
+        EventAdsManager.ShowInterstitialAds += ShowAdsInter;
+        EventAdsManager.ShowRewardAds += ShowAdsReward;
     }
 
+    public void GetRemoteConfig()
+    {
+        InterCapping = (float)FirebaseManager.Instance.GetConfigValue(Keys.key_inter_capping).DoubleValue;
+        InterCappingAfterReward = (float)FirebaseManager.Instance.GetConfigValue(Keys.key_inter_capping_after_reward).DoubleValue;
+    }
 
     private void ClearEvent()
     {
-        EventShowAdsInter = null;
-        EventShowAdsReward = null;
         EventShowBanner = null;
         EventHideBanner = null;
     }
@@ -56,15 +55,11 @@ public class AdsController : Singleton<AdsController>
     public void AddEvent()
     {
         ClearEvent();
-        EventShowAdsInter += ShowAdsInter;
-        EventShowAdsReward += ShowAdsReward;
         EventShowBanner += ShowBanner;
         EventHideBanner += HideBanner;
     }
     public void RemoveEvent()
     {
-        EventShowAdsInter -= ShowAdsInter;
-        EventShowAdsReward -= ShowAdsReward;
         EventShowBanner -= ShowBanner;
         EventHideBanner -= HideBanner;
     }
@@ -82,35 +77,29 @@ public class AdsController : Singleton<AdsController>
     }
     
     [Button]
-    public void ShowAdsReward(string placementId, Action callback, Action closeAction, Action failAction)
+    public void ShowAdsReward(Action successAction, Action failAction, Action closeAction, bool isSkipCapping = false, string eventName = "", params AnalyticsParameter[] parameters)
     {
-        SDKDebugLogger.Log($"ShowAdsReward: {placementId}");
-        // if (GameManager.Instance.BuildType == BuildType.Cheat)
-        // {
-        //     callback?.Invoke();
-        // }
-        // else
-        // {
-            AdsManager.Instance.ShowRewardVideo(placementId,
+        AdsManager.Instance.ShowRewardVideo(
+        () =>
+            {
+                successAction?.Invoke();
+                InterCooldown += InterCappingAfterReward;
+                InterCooldown = Mathf.Clamp(InterCooldown, 0, InterCapping);
+                EventTrackingManager.TrackEventFirebase?.Invoke(eventName, parameters);
+                AppsFlyerManager.TrackRewarded_Displayed();
+            },
             () =>
-                {
-                    callback?.Invoke();
-                    InterCooldown += InterCappingAfterReward;
-                    InterCooldown = Mathf.Clamp(InterCooldown, 0, InterCapping);
-                },
-                () =>
-                {
-                    closeAction?.Invoke();
-                },
-                () =>
-                {
-                    FailToShowRewardAds(failAction);
-                }
-            );
-        // }
+            {
+                closeAction?.Invoke();
+            },
+            () =>
+            {
+                FailToShowdAds(failAction);
+            }
+        );
     }
 
-    private void FailToShowRewardAds(Action failAction = null)
+    private void FailToShowdAds(Action failAction = null)
     {
         failAction?.Invoke();
 
@@ -128,23 +117,35 @@ public class AdsController : Singleton<AdsController>
     
     
     [Button]
-    public void ShowAdsInter(string placementId, Action callback, Action closeAction, Action failAction, bool isSkipCapping = false, bool isBackfillInter = false)
+    public void ShowAdsInter(Action successAction, Action failAction, Action closeAction, bool isSkipCapping = false, bool isBackfillInter = false, string eventName = "", params AnalyticsParameter[] parameters)
     {
-        SDKDebugLogger.Log($"ShowAdsInter: {placementId}");
-        // if (GameManager.Instance.Level.Value < InterStartShowLevel || (!InterReady && !isSkipCapping))
-        //     return;
-        if(!CheckCanShowAds())
-            return;
-        // if ((IsRemoveAds && !isBackfillInter) || GameManager.Instance.BuildType == BuildType.Cheat)
-        // {
-        //     callback?.Invoke();
-        // }
-        // else
+        // Check Remove Ads
+
+        if (!InterReady && !isSkipCapping)
         {
-            AdsManager.Instance.ShowInterstitial(placementId, callback, closeAction, failAction, true, isSkipCapping);
-            InterCooldown = InterCapping;
-            InterJustShowed = true;
+            successAction?.Invoke();
+            return;
         }
+        AdsManager.Instance.ShowInterstitial(
+            () =>
+            {
+                InterCooldown = InterCapping;
+                successAction?.Invoke();
+                InterCooldown = Mathf.Clamp(InterCooldown, 0, InterCapping);
+                EventTrackingManager.TrackEventFirebase?.Invoke(eventName, parameters);
+                AppsFlyerManager.TrackInterstitial_Displayed();
+            },
+            () =>
+            {
+                closeAction?.Invoke();
+            },
+            () =>
+            {
+                FailToShowdAds(failAction);
+            }
+        );
+        InterCooldown = InterCapping;
+        InterJustShowed = true;
     }
     [Button]
     public void ShowBanner()
