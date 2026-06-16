@@ -13,6 +13,7 @@ namespace GameBackendModule.Services
         void SetAuthToken(string token);
         void ClearAuthToken();
         IEnumerator Get<T>(string endpoint, Action<ApiResponse<T>> onSuccess, Action<ErrorResponse> onError);
+        IEnumerator GetRaw(string endpoint, Action<string, int, string> onSuccess, Action<ErrorResponse> onError);
         IEnumerator Post<T>(string endpoint, object data, Action<ApiResponse<T>> onSuccess, Action<ErrorResponse> onError, IReadOnlyDictionary<string, string> extraHeaders = null);
         IEnumerator Put<T>(string endpoint, object data, Action<ApiResponse<T>> onSuccess, Action<ErrorResponse> onError);
         IEnumerator Patch<T>(string endpoint, object data, Action<ApiResponse<T>> onSuccess, Action<ErrorResponse> onError);
@@ -44,6 +45,11 @@ namespace GameBackendModule.Services
         public IEnumerator Get<T>(string endpoint, Action<ApiResponse<T>> onSuccess, Action<ErrorResponse> onError)
         {
             yield return SendRequest<T>(UnityWebRequest.kHttpVerbGET, endpoint, null, onSuccess, onError, null);
+        }
+
+        public IEnumerator GetRaw(string endpoint, Action<string, int, string> onSuccess, Action<ErrorResponse> onError)
+        {
+            yield return SendRawRequest(UnityWebRequest.kHttpVerbGET, endpoint, null, onSuccess, onError);
         }
 
         public IEnumerator Post<T>(string endpoint, object data, Action<ApiResponse<T>> onSuccess, Action<ErrorResponse> onError, IReadOnlyDictionary<string, string> extraHeaders = null)
@@ -225,6 +231,67 @@ namespace GameBackendModule.Services
 						responseDate = responseDateHeader
                     };
                     onError?.Invoke(errorResponse);
+                }
+            }
+
+            request.Dispose();
+        }
+
+        private IEnumerator SendRawRequest(string method, string endpoint, object data, Action<string, int, string> onSuccess, Action<ErrorResponse> onError)
+        {
+            string url = baseUrl + endpoint;
+            UnityWebRequest request = new UnityWebRequest(url, method);
+
+            request.SetRequestHeader(ApiConstants.CONTENT_TYPE_HEADER, ApiConstants.CONTENT_TYPE_JSON);
+            request.SetRequestHeader("Accept", ApiConstants.CONTENT_TYPE_JSON);
+
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                request.SetRequestHeader(ApiConstants.AUTHORIZATION_HEADER, ApiConstants.BEARER_PREFIX + authToken);
+            }
+
+            if (data != null && (method == UnityWebRequest.kHttpVerbPOST || method == UnityWebRequest.kHttpVerbPUT || method == HttpVerbPatch))
+            {
+                string jsonData = SimpleJsonSerializer.ToJson(data);
+                byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            }
+
+            request.downloadHandler = new DownloadHandlerBuffer();
+            yield return request.SendWebRequest();
+
+            string responseDateHeader = request.GetResponseHeader("Date");
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+#if UNITY_EDITOR
+                Debug.Log($"HTTP {method} {url} -> {(int)request.responseCode}\nBody: {request.downloadHandler.text}");
+#endif
+                onSuccess?.Invoke(request.downloadHandler.text, (int)request.responseCode, responseDateHeader);
+            }
+            else
+            {
+                try
+                {
+                    string errorText = request.downloadHandler.text;
+#if UNITY_EDITOR
+                    Debug.LogError($"HTTP {method} {url} FAILED -> {(int)request.responseCode} {request.error}\nBody: {errorText}");
+#endif
+                    ErrorResponse errorResponse = JsonUtility.FromJson<ErrorResponse>(errorText);
+                    errorResponse.statusCode = (int)request.responseCode;
+                    errorResponse.responseDate = responseDateHeader;
+                    onError?.Invoke(errorResponse);
+                }
+                catch (Exception ex)
+                {
+                    onError?.Invoke(new ErrorResponse
+                    {
+                        success = false,
+                        message = request.error ?? "Unknown error",
+                        error = ex.Message,
+                        statusCode = (int)request.responseCode,
+                        responseDate = responseDateHeader
+                    });
                 }
             }
 

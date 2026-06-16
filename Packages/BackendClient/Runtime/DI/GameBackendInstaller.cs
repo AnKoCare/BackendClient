@@ -46,6 +46,10 @@ namespace GameBackendModule.DI
                 .To<WeeklyContestService>()
                 .AsSingle();
 
+            Container.Bind<ITeamService>()
+                .To<TeamService>()
+                .AsSingle();
+
             // Bind Game Backend Manager
             Container.Bind<IGameBackendManager>()
                 .To<GameBackendManager>()

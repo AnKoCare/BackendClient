@@ -39,6 +39,33 @@ namespace GameBackendModule.Models
         /// <summary>Mã bảng World trên server (ISO + 'ww').</summary>
         public const string LEADERBOARD_WORLD_COUNTRY_CODE = "ww";
         
+        // Team endpoints (Bearer JWT — docs/TEAM_API.md)
+        public const string CREATE_TEAM_ENDPOINT = "/api/v1/team";
+        public const string MY_TEAM_ENDPOINT = "/api/v1/team/my";
+        public const string TEAM_SUGGESTIONS_ENDPOINT = "/api/v1/team/suggestions";
+        public const string TEAM_SEARCH_ENDPOINT = "/api/v1/team/search";
+        public const string TEAM_DETAILS_ENDPOINT = "/api/v1/team/{0}";
+        public const string UPDATE_TEAM_ENDPOINT = "/api/v1/team/{0}";
+        public const string TEAM_MEMBERS_ENDPOINT = "/api/v1/team/{0}/members";
+        public const string JOIN_TEAM_ENDPOINT = "/api/v1/team/join";
+        public const string LEAVE_TEAM_ENDPOINT = "/api/v1/team/leave";
+        public const string TRANSFER_TEAM_LEADERSHIP_ENDPOINT = "/api/v1/team/{0}/transfer-leadership";
+        public const string KICK_TEAM_MEMBER_ENDPOINT = "/api/v1/team/{0}/kick";
+        public const string PROMOTE_TEAM_MEMBER_ENDPOINT = "/api/v1/team/{0}/promote";
+        public const string TEAM_JOIN_REQUESTS_ENDPOINT = "/api/v1/team/{0}/join-requests";
+        public const string APPROVE_TEAM_JOIN_REQUEST_ENDPOINT = "/api/v1/team/{0}/join-requests/{1}/approve";
+        public const string REJECT_TEAM_JOIN_REQUEST_ENDPOINT = "/api/v1/team/{0}/join-requests/{1}/reject";
+        public const string TEAM_CHAT_ENDPOINT = "/api/v1/team/{0}/chat";
+        public const string TEAM_LIVES_REQUEST_ENDPOINT = "/api/v1/team/{0}/lives/request";
+        public const string TEAM_LIVES_HELP_ENDPOINT = "/api/v1/team/{0}/lives/help";
+        public const string TEAM_LIVES_STATUS_ENDPOINT = "/api/v1/team/{0}/lives/status";
+
+        /// <summary>Level tối thiểu mở khóa Team (client kiểm tra trước khi gọi API).</summary>
+        public const int TEAM_UNLOCK_LEVEL = 21;
+
+        /// <summary>Phí tạo team — client tự trừ Coins trước POST /team.</summary>
+        public const int TEAM_CREATE_COST_COINS = 100;
+
         // Clan endpoints
         public const string CREATE_CLAN_ENDPOINT = "/api/v1/clan";
         public const string CLAN_DETAILS_ENDPOINT = "/api/v1/clan/{0}";

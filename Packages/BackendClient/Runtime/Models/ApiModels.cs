@@ -442,6 +442,254 @@ namespace GameBackendModule.Models
         public int offset = 0;
     }
 
+    // Team Models (team.controller + team.service — docs/TEAM_API.md)
+    public static class TeamType
+    {
+        public const string Open = "open";
+        public const string Closed = "closed";
+    }
+
+    public static class TeamRole
+    {
+        public const string Leader = "leader";
+        public const string CoLeader = "co_leader";
+        public const string Member = "member";
+    }
+
+    [Serializable]
+    public class CreateTeamRequest
+    {
+        public string name;
+        public int badgeId;
+        public string description;
+        public int minLevelRequired;
+        /// <summary><see cref="TeamType.Open"/> hoặc <see cref="TeamType.Closed"/>.</summary>
+        public string type;
+    }
+
+    [Serializable]
+    public class UpdateTeamRequest
+    {
+        public int badgeId;
+        public string description;
+        public int minLevelRequired;
+        public string type;
+    }
+
+    [Serializable]
+    public class TeamUserRef
+    {
+        public string id;
+        public string username;
+        public string displayName;
+        public string avatar;
+    }
+
+    [Serializable]
+    public class TeamMemberData
+    {
+        public string id;
+        public string role;
+        public string joinedAt;
+        public TeamUserRef user;
+    }
+
+    [Serializable]
+    public class TeamData
+    {
+        public string id;
+        public string name;
+        public int badgeId;
+        public string description;
+        public int minLevelRequired;
+        public string type;
+        public int memberCount;
+        public int maxMembers;
+        public string leaderId;
+        public string createdAt;
+        public string updatedAt;
+        public TeamMemberData[] members;
+        /// <summary>POST /team/join trên closed team — <c>pending</c>.</summary>
+        public string status;
+        /// <summary>Thông báo khi join request pending.</summary>
+        public string message;
+    }
+
+    [Serializable]
+    public class TeamSuggestionItem
+    {
+        public string id;
+        public string name;
+        public int badgeId;
+        public string description;
+        public string type;
+        public int minLevelRequired;
+        public int memberCount;
+        public int maxMembers;
+        public int spotsLeft;
+    }
+
+    [Serializable]
+    public class TeamSuggestionsResponse
+    {
+        public int playerLevel;
+        public TeamSuggestionItem[] suggestions;
+    }
+
+    [Serializable]
+    public class TeamSearchItem
+    {
+        public string id;
+        public string name;
+        public int badgeId;
+        public string description;
+        public string type;
+        public int minLevelRequired;
+        public int memberCount;
+        public int maxMembers;
+        public bool isFull;
+        public int spotsLeft;
+    }
+
+    [Serializable]
+    public class TeamSearchPagination
+    {
+        public int page;
+        public int limit;
+        public int total;
+        public int totalPages;
+    }
+
+    [Serializable]
+    public class TeamSearchResponse
+    {
+        public TeamSearchItem[] teams;
+        public TeamSearchPagination pagination;
+    }
+
+    [Serializable]
+    public class JoinTeamRequest
+    {
+        public string teamId;
+    }
+
+    [Serializable]
+    public class LeaveTeamRequest
+    {
+        public string teamId;
+    }
+
+    [Serializable]
+    public class KickTeamMemberRequest
+    {
+        public string userId;
+    }
+
+    [Serializable]
+    public class PromoteTeamMemberRequest
+    {
+        public string userId;
+        /// <summary><see cref="TeamRole.CoLeader"/> hoặc <see cref="TeamRole.Member"/>.</summary>
+        public string role;
+    }
+
+    [Serializable]
+    public class TransferTeamLeadershipRequest
+    {
+        public string userId;
+    }
+
+    [Serializable]
+    public class TeamJoinRequestData
+    {
+        public string id;
+        public string status;
+        public string createdAt;
+        public TeamUserRef user;
+    }
+
+    [Serializable]
+    public class TeamMessageResponse
+    {
+        public string message;
+        public string userId;
+    }
+
+    [Serializable]
+    public class SendTeamChatRequest
+    {
+        public string text;
+    }
+
+    [Serializable]
+    public class TeamChatEventData
+    {
+        public string actorName;
+        public string targetName;
+    }
+
+    [Serializable]
+    public class TeamChatMessage
+    {
+        public string id;
+        /// <summary><c>user</c> hoặc <c>system</c>.</summary>
+        public string type;
+        public string userId;
+        public string displayName;
+        public string text;
+        /// <summary>JSON key <c>event</c> — system message event type.</summary>
+        public string @event;
+        public TeamChatEventData eventData;
+        public string timestamp;
+    }
+
+    [Serializable]
+    public class TeamLivesCooldown
+    {
+        public string cooldownEndsAt;
+    }
+
+    [Serializable]
+    public class TeamLivesRequestResponse
+    {
+        public string cooldownEndsAt;
+    }
+
+    [Serializable]
+    public class TeamLivesHelperReward
+    {
+        public int coins;
+    }
+
+    [Serializable]
+    public class TeamLivesHelpResponse
+    {
+        public TeamLivesHelperReward helperReward;
+        public int totalHelpers;
+        public bool fulfilled;
+    }
+
+    [Serializable]
+    public class HelpTeammateRequest
+    {
+        public string targetUserId;
+    }
+
+    [Serializable]
+    public class TeamActiveLivesRequest
+    {
+        public string userId;
+        public int helpersCount;
+        public string cooldownEndsAt;
+    }
+
+    [Serializable]
+    public class TeamLivesStatusResponse
+    {
+        public TeamLivesCooldown myLivesCooldown;
+        public TeamActiveLivesRequest[] activeRequests;
+    }
+
     // Game Models (POST /api/v1/game/start — khớp StartGameDto server)
     [Serializable]
     public class StartGameRequest
