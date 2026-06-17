@@ -131,11 +131,13 @@ public class PurchaserCallbacks
         decimal num = product.metadata.localizedPrice;
         string currencyCode = product.metadata.isoCurrencyCode;
 
-
 #if RELEASE_ONLY
-        AppsFlyerManager.TrackAppsFlyerPurchase(productID, num, currencyCode);
+        if(!PlayerHelperActive.Instance.GetIsHelperActive())
+        {
+            AppsFlyerManager.TrackAppsFlyerPurchase(productID, num, currencyCode);
+        }
 #endif
-        
+
         EventManager.TriggerEvent("BuyIAPSuccess");
         // InGameAnalyticController.EventTrackIAPConfirm?.Invoke(productID, "shop");
         

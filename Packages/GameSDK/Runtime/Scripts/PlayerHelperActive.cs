@@ -1,17 +1,19 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using TW.Utility.Extension;
+using TW.Utility.DesignPattern;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace SDK
 {
-    public class PlayerHelperActive : MonoBehaviour
+    public class PlayerHelperActive : Singleton<PlayerHelperActive>
     {
         private Text _playerIdLabel;
         private GameObject _overlayRoot;
 
         private int FullPlayerId => SystemInfo.deviceUniqueIdentifier.GetHashCode();
+        private bool IsHelperActive = false;
 
         private void Awake()
         {
@@ -67,6 +69,11 @@ namespace SDK
             TryActiveHelper().Forget();
         }
 
+        public bool GetIsHelperActive()
+        {
+            return IsHelperActive;
+        }
+
         private async UniTask TryActiveHelper()
         {
             List<Dictionary<string, string>> dataTable =
@@ -75,6 +82,7 @@ namespace SDK
             {
                 if (dataTable[i]["PlayerID"] != FullPlayerId.ToString()) continue;
                 // CheatObject.HelperIsActive = true;
+                IsHelperActive = true;
                 _playerIdLabel.text = $"Player ID: {FullPlayerId} (Helper Active)";
                 break;
             }
