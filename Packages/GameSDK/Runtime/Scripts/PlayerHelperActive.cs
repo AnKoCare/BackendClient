@@ -78,9 +78,17 @@ namespace SDK
         {
             List<Dictionary<string, string>> dataTable =
                 await ABakingSheet.GetDataTable("1onpRBqfzEDcZd4oi_Yv63Nz-r6PFTJ2KQE1NVhOYBmY", "HelperActive");
+
+            if (dataTable == null || _playerIdLabel == null)
+                return;
+
+            string playerIdStr = FullPlayerId.ToString();
             for (int i = 0; i < dataTable.Count; i++)
             {
-                if (dataTable[i]["PlayerID"] != FullPlayerId.ToString()) continue;
+                if (dataTable[i] == null || !dataTable[i].TryGetValue("PlayerID", out string playerId))
+                    continue;
+                if (playerId != playerIdStr) continue;
+
                 // CheatObject.HelperIsActive = true;
                 IsHelperActive = true;
                 _playerIdLabel.text = $"Player ID: {FullPlayerId} (Helper Active)";
