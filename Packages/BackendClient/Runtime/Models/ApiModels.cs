@@ -63,6 +63,7 @@ namespace GameBackendModule.Models
         public int WinStreak;
         public int TotalCoinEarn;
         public int BoosterUsed;
+        public int SweetMealChampion;
     }
 
     /// <summary>Player kèm auth (register / external-login).</summary>
