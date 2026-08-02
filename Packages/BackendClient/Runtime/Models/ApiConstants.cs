@@ -60,6 +60,18 @@ namespace GameBackendModule.Models
         public const string TEAM_LIVES_HELP_ENDPOINT = "/api/v1/team/{0}/lives/help";
         public const string TEAM_LIVES_STATUS_ENDPOINT = "/api/v1/team/{0}/lives/status";
 
+        // F1 — Ranking + Country
+        public const string TEAM_RANKING_ENDPOINT = "/api/v1/team/ranking";
+        // F4 — Disband (DELETE /team/{0}, dùng chung path với details)
+        public const string DISBAND_TEAM_ENDPOINT = "/api/v1/team/{0}";
+        // F2 — Team Gift
+        public const string TEAM_GIFTS_ENDPOINT = "/api/v1/team/{0}/gifts";
+        public const string TEAM_GIFT_CLAIM_ENDPOINT = "/api/v1/team/{0}/gifts/{1}/claim";
+        // F3 — Ask Card
+        public const string TEAM_CARD_ASK_ENDPOINT = "/api/v1/team/{0}/cards/ask";
+        public const string TEAM_CARD_GIVE_ENDPOINT = "/api/v1/team/{0}/cards/give";
+        public const string TEAM_CARD_STATUS_ENDPOINT = "/api/v1/team/{0}/cards/status";
+
         /// <summary>Level tối thiểu mở khóa Team (client kiểm tra trước khi gọi API).</summary>
         public const int TEAM_UNLOCK_LEVEL = 21;
 

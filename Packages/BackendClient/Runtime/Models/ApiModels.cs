@@ -466,6 +466,8 @@ namespace GameBackendModule.Models
         public int minLevelRequired;
         /// <summary><see cref="TeamType.Open"/> hoặc <see cref="TeamType.Closed"/>.</summary>
         public string type;
+        /// <summary>ISO alpha-2 viết thường. Bỏ trống → server lấy từ player creator.</summary>
+        public string countryCode;
     }
 
     [Serializable]
@@ -475,6 +477,8 @@ namespace GameBackendModule.Models
         public string description;
         public int minLevelRequired;
         public string type;
+        /// <summary>ISO alpha-2 viết thường (Leader chỉnh).</summary>
+        public string countryCode;
     }
 
     [Serializable]
@@ -492,6 +496,12 @@ namespace GameBackendModule.Models
         public string id;
         public string role;
         public string joinedAt;
+        /// <summary>F4 — hoạt động gần nhất (~aTi client Skewer).</summary>
+        public string lastActiveAt;
+        /// <summary>F4 — level live từ players.info.Level.</summary>
+        public int level;
+        /// <summary>F4 — tổng số lần giúp đồng đội.</summary>
+        public int contribution;
         public TeamUserRef user;
     }
 
@@ -504,8 +514,16 @@ namespace GameBackendModule.Models
         public string description;
         public int minLevelRequired;
         public string type;
+        /// <summary>F1 — ISO alpha-2 viết thường (null nếu chưa set).</summary>
+        public string countryCode;
         public int memberCount;
         public int maxMembers;
+        /// <summary>F1 — tổng level thành viên (điểm xếp hạng).</summary>
+        public int teamScore;
+        /// <summary>F4 — tổng contribution thành viên.</summary>
+        public int totalContribution;
+        /// <summary>F1 — World rank (số team teamScore cao hơn + 1).</summary>
+        public int rank;
         public string leaderId;
         public string createdAt;
         public string updatedAt;
@@ -524,9 +542,11 @@ namespace GameBackendModule.Models
         public int badgeId;
         public string description;
         public string type;
+        public string countryCode;
         public int minLevelRequired;
         public int memberCount;
         public int maxMembers;
+        public int teamScore;
         public int spotsLeft;
     }
 
@@ -545,9 +565,11 @@ namespace GameBackendModule.Models
         public int badgeId;
         public string description;
         public string type;
+        public string countryCode;
         public int minLevelRequired;
         public int memberCount;
         public int maxMembers;
+        public int teamScore;
         public bool isFull;
         public int spotsLeft;
     }
@@ -689,6 +711,110 @@ namespace GameBackendModule.Models
     {
         public TeamLivesCooldown myLivesCooldown;
         public TeamActiveLivesRequest[] activeRequests;
+    }
+
+    // ─── F1: Ranking + Country ──────────────────────────────────────────────────
+    [Serializable]
+    public class TeamRankingItem
+    {
+        public int rank;
+        public string id;
+        public string name;
+        public int badgeId;
+        public string type;
+        public string countryCode;
+        public int minLevelRequired;
+        public int memberCount;
+        public int maxMembers;
+        public int teamScore;
+    }
+
+    [Serializable]
+    public class TeamRankingResponse
+    {
+        /// <summary><c>world</c> hoặc <c>country</c>.</summary>
+        public string scope;
+        public string countryCode;
+        public TeamSearchPagination pagination;
+        public TeamRankingItem[] teams;
+    }
+
+    // ─── F2: Team Gift ──────────────────────────────────────────────────────────
+    [Serializable]
+    public class SendGiftRequest
+    {
+        /// <summary>Payload gift do client tự hiểu (≤ 500 ký tự).</summary>
+        public string payload;
+    }
+
+    [Serializable]
+    public class TeamGiftData
+    {
+        public string id;
+        public string senderId;
+        public string payload;
+        public string createdAt;
+        public string expiresAt;
+        /// <summary>Chỉ có ở GET /gifts — user hiện tại đã claim chưa.</summary>
+        public bool claimed;
+    }
+
+    [Serializable]
+    public class ClaimGiftResponse
+    {
+        /// <summary>Client tự cộng reward từ payload này.</summary>
+        public string payload;
+    }
+
+    // ─── F3: Ask Card ───────────────────────────────────────────────────────────
+    [Serializable]
+    public class AskCardRequest
+    {
+        public int cardIndex;
+    }
+
+    [Serializable]
+    public class AskCardResponse
+    {
+        public string cooldownEndsAt;
+        public int cardIndex;
+    }
+
+    [Serializable]
+    public class GiveCardRequest
+    {
+        /// <summary>userId của người đang xin card.</summary>
+        public string targetUserId;
+    }
+
+    [Serializable]
+    public class GiveCardResponse
+    {
+        public int totalGivers;
+        public bool fulfilled;
+    }
+
+    [Serializable]
+    public class TeamCardCooldown
+    {
+        public string cooldownEndsAt;
+        public int cardIndex;
+    }
+
+    [Serializable]
+    public class TeamActiveCardRequest
+    {
+        public string userId;
+        public int cardIndex;
+        public int giversCount;
+        public string cooldownEndsAt;
+    }
+
+    [Serializable]
+    public class TeamCardStatusResponse
+    {
+        public TeamCardCooldown myCardCooldown;
+        public TeamActiveCardRequest[] activeRequests;
     }
 
     // Game Models (POST /api/v1/game/start — khớp StartGameDto server)

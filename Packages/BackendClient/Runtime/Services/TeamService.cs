@@ -65,6 +65,30 @@ namespace GameBackendModule.Services
 
         /// <summary>GET /team/:id/lives/status</summary>
         IEnumerator GetLivesStatus(string teamId, Action<ApiResponse<TeamLivesStatusResponse>> onSuccess, Action<ErrorResponse> onError);
+
+        /// <summary>F1 — GET /team/ranking?scope=world|country&amp;countryCode=&amp;page=&amp;limit=</summary>
+        IEnumerator GetRanking(string scope, string countryCode, int page, int limit, Action<ApiResponse<TeamRankingResponse>> onSuccess, Action<ErrorResponse> onError);
+
+        /// <summary>F4 — DELETE /team/:id (Leader only) — giải tán team.</summary>
+        IEnumerator DisbandTeam(string teamId, Action<ApiResponse<TeamMessageResponse>> onSuccess, Action<ErrorResponse> onError);
+
+        /// <summary>F2 — POST /team/:id/gifts — gửi gift cho team.</summary>
+        IEnumerator SendGift(string teamId, SendGiftRequest request, Action<ApiResponse<TeamGiftData>> onSuccess, Action<ErrorResponse> onError);
+
+        /// <summary>F2 — GET /team/:id/gifts — gift còn hạn + cờ claimed.</summary>
+        IEnumerator GetGifts(string teamId, Action<ApiResponse<TeamGiftData[]>> onSuccess, Action<ErrorResponse> onError);
+
+        /// <summary>F2 — POST /team/:id/gifts/:giftId/claim — client tự cộng reward từ payload.</summary>
+        IEnumerator ClaimGift(string teamId, string giftId, Action<ApiResponse<ClaimGiftResponse>> onSuccess, Action<ErrorResponse> onError);
+
+        /// <summary>F3 — POST /team/:id/cards/ask — cooldown 4h riêng.</summary>
+        IEnumerator AskCard(string teamId, AskCardRequest request, Action<ApiResponse<AskCardResponse>> onSuccess, Action<ErrorResponse> onError);
+
+        /// <summary>F3 — POST /team/:id/cards/give — cho card cho người xin.</summary>
+        IEnumerator GiveCard(string teamId, GiveCardRequest request, Action<ApiResponse<GiveCardResponse>> onSuccess, Action<ErrorResponse> onError);
+
+        /// <summary>F3 — GET /team/:id/cards/status</summary>
+        IEnumerator GetCardStatus(string teamId, Action<ApiResponse<TeamCardStatusResponse>> onSuccess, Action<ErrorResponse> onError);
     }
 
     public class TeamService : ITeamService
@@ -190,6 +214,61 @@ namespace GameBackendModule.Services
         public IEnumerator GetLivesStatus(string teamId, Action<ApiResponse<TeamLivesStatusResponse>> onSuccess, Action<ErrorResponse> onError)
         {
             string endpoint = string.Format(ApiConstants.TEAM_LIVES_STATUS_ENDPOINT, teamId);
+            yield return apiClient.Get(endpoint, onSuccess, onError);
+        }
+
+        // ─── F1: Ranking + Country ────────────────────────────────────────────────
+        public IEnumerator GetRanking(string scope, string countryCode, int page, int limit, Action<ApiResponse<TeamRankingResponse>> onSuccess, Action<ErrorResponse> onError)
+        {
+            string s = string.IsNullOrEmpty(scope) ? "world" : scope;
+            string endpoint = $"{ApiConstants.TEAM_RANKING_ENDPOINT}?scope={Uri.EscapeDataString(s)}&page={page}&limit={limit}";
+            if (!string.IsNullOrEmpty(countryCode))
+                endpoint += "&countryCode=" + Uri.EscapeDataString(countryCode);
+            yield return apiClient.Get(endpoint, onSuccess, onError);
+        }
+
+        // ─── F4: Disband ──────────────────────────────────────────────────────────
+        public IEnumerator DisbandTeam(string teamId, Action<ApiResponse<TeamMessageResponse>> onSuccess, Action<ErrorResponse> onError)
+        {
+            string endpoint = string.Format(ApiConstants.DISBAND_TEAM_ENDPOINT, teamId);
+            yield return apiClient.Delete(endpoint, onSuccess, onError);
+        }
+
+        // ─── F2: Team Gift ────────────────────────────────────────────────────────
+        public IEnumerator SendGift(string teamId, SendGiftRequest request, Action<ApiResponse<TeamGiftData>> onSuccess, Action<ErrorResponse> onError)
+        {
+            string endpoint = string.Format(ApiConstants.TEAM_GIFTS_ENDPOINT, teamId);
+            yield return apiClient.Post(endpoint, request, onSuccess, onError);
+        }
+
+        public IEnumerator GetGifts(string teamId, Action<ApiResponse<TeamGiftData[]>> onSuccess, Action<ErrorResponse> onError)
+        {
+            string endpoint = string.Format(ApiConstants.TEAM_GIFTS_ENDPOINT, teamId);
+            yield return GetJsonArray(endpoint, TeamJsonHelper.ParseGifts, onSuccess, onError);
+        }
+
+        public IEnumerator ClaimGift(string teamId, string giftId, Action<ApiResponse<ClaimGiftResponse>> onSuccess, Action<ErrorResponse> onError)
+        {
+            string endpoint = string.Format(ApiConstants.TEAM_GIFT_CLAIM_ENDPOINT, teamId, giftId);
+            yield return apiClient.Post(endpoint, new EmptyBody(), onSuccess, onError);
+        }
+
+        // ─── F3: Ask Card ─────────────────────────────────────────────────────────
+        public IEnumerator AskCard(string teamId, AskCardRequest request, Action<ApiResponse<AskCardResponse>> onSuccess, Action<ErrorResponse> onError)
+        {
+            string endpoint = string.Format(ApiConstants.TEAM_CARD_ASK_ENDPOINT, teamId);
+            yield return apiClient.Post(endpoint, request, onSuccess, onError);
+        }
+
+        public IEnumerator GiveCard(string teamId, GiveCardRequest request, Action<ApiResponse<GiveCardResponse>> onSuccess, Action<ErrorResponse> onError)
+        {
+            string endpoint = string.Format(ApiConstants.TEAM_CARD_GIVE_ENDPOINT, teamId);
+            yield return apiClient.Post(endpoint, request, onSuccess, onError);
+        }
+
+        public IEnumerator GetCardStatus(string teamId, Action<ApiResponse<TeamCardStatusResponse>> onSuccess, Action<ErrorResponse> onError)
+        {
+            string endpoint = string.Format(ApiConstants.TEAM_CARD_STATUS_ENDPOINT, teamId);
             yield return apiClient.Get(endpoint, onSuccess, onError);
         }
 

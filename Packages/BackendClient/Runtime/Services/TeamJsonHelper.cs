@@ -26,6 +26,12 @@ namespace GameBackendModule.Services
             public TeamChatMessage[] items;
         }
 
+        [System.Serializable]
+        private class TeamGiftArrayWrapper
+        {
+            public TeamGiftData[] items;
+        }
+
         public static TeamMemberData[] ParseMembers(string json)
         {
             return ParseArray<TeamMemberArrayWrapper, TeamMemberData>(json)?.items;
@@ -39,6 +45,11 @@ namespace GameBackendModule.Services
         public static TeamChatMessage[] ParseChatMessages(string json)
         {
             return ParseArray<TeamChatMessageArrayWrapper, TeamChatMessage>(json)?.items;
+        }
+
+        public static TeamGiftData[] ParseGifts(string json)
+        {
+            return ParseArray<TeamGiftArrayWrapper, TeamGiftData>(json)?.items;
         }
 
         private static TWrapper ParseArray<TWrapper, TItem>(string json)
