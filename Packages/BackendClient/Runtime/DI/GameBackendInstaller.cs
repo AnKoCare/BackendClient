@@ -60,6 +60,10 @@ namespace GameBackendModule.DI
                 .To<ClanService>()
                 .AsSingle();
 
+            Container.Bind<ITeamService>()
+                .To<TeamService>()
+                .AsSingle();
+
             Container.Bind<IGameService>()
                 .To<GameService>()
                 .AsSingle();
