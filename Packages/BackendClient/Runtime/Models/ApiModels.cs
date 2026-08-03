@@ -488,6 +488,11 @@ namespace GameBackendModule.Models
         public string username;
         public string displayName;
         public string avatar;
+        // Cosmetics từ players.info (server đọc từ player level cao nhất của user).
+        public int AvatarIndex;
+        public int FrameIndex;
+        public int BadgeIndex;
+        public int EffectNameIndex;
     }
 
     [Serializable]
