@@ -668,7 +668,8 @@ namespace GameBackendModule.Models
         /// <summary><c>user</c> hoặc <c>system</c>.</summary>
         public string type;
         public string userId;
-        public string displayName;
+        /// <summary>Tên người gửi = PlayerName trong players.info.</summary>
+        public string playerName;
         public string text;
         /// <summary>JSON key <c>event</c> — system message event type.</summary>
         public string @event;
