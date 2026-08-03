@@ -485,9 +485,8 @@ namespace GameBackendModule.Models
     public class TeamUserRef
     {
         public string id;
+        /// <summary>Tên hiển thị của user — server set = PlayerName trong players.info.</summary>
         public string username;
-        public string displayName;
-        public string avatar;
         // Cosmetics từ players.info (server đọc từ player level cao nhất của user).
         public int AvatarIndex;
         public int FrameIndex;
