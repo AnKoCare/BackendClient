@@ -345,7 +345,13 @@ namespace GameBackendModule.Models
     public class LeaderboardTopResponse
     {
         public string countryCode;
+        /// <summary>Số entry trả về trong <see cref="entries"/>.</summary>
         public int total;
+        /// <summary>
+        /// Tổng entry board đang có (≤ 1000) — dùng để biết còn bao nhiêu trang phải tải.
+        /// Bằng 0 nếu server chưa hỗ trợ field này → fallback về <see cref="total"/>.
+        /// </summary>
+        public int boardTotal;
         public LeaderboardTopEntry[] entries;
     }
 

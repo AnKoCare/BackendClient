@@ -23,6 +23,11 @@ namespace GameBackendModule.Services
     public class ApiClient : IApiClient
     {
         private const string HttpVerbPatch = "PATCH";
+        /// <summary>
+        /// Console Editor xử lý chuỗi rất chậm với payload lớn (vd. leaderboard top 1000 ~250KB),
+        /// nên chỉ log phần đầu body.
+        /// </summary>
+        private const int MaxLoggedBodyLength = 2000;
 
         private string authToken;
         private readonly string baseUrl;
@@ -41,6 +46,17 @@ namespace GameBackendModule.Services
         {
             authToken = null;
         }
+
+#if UNITY_EDITOR
+        private static string TruncateForLog(string body)
+        {
+            if (string.IsNullOrEmpty(body) || body.Length <= MaxLoggedBodyLength)
+                return body;
+
+            return body.Substring(0, MaxLoggedBodyLength) +
+                   $"… (+{body.Length - MaxLoggedBodyLength} ký tự)";
+        }
+#endif
 
         public IEnumerator Get<T>(string endpoint, Action<ApiResponse<T>> onSuccess, Action<ErrorResponse> onError)
         {
@@ -118,7 +134,7 @@ namespace GameBackendModule.Services
                 {
                     string responseText = request.downloadHandler.text;
 #if UNITY_EDITOR
-                    Debug.Log($"HTTP {method} {url} -> {(int)request.responseCode}\nBody: {responseText}");
+                    Debug.Log($"HTTP {method} {url} -> {(int)request.responseCode}\nBody: {TruncateForLog(responseText)}");
 #endif
 
                     // JSON literal `null` (vd. GET /leaderboard/rank khi không có rank)
@@ -265,7 +281,7 @@ namespace GameBackendModule.Services
             if (request.result == UnityWebRequest.Result.Success)
             {
 #if UNITY_EDITOR
-                Debug.Log($"HTTP {method} {url} -> {(int)request.responseCode}\nBody: {request.downloadHandler.text}");
+                Debug.Log($"HTTP {method} {url} -> {(int)request.responseCode}\nBody: {TruncateForLog(request.downloadHandler.text)}");
 #endif
                 onSuccess?.Invoke(request.downloadHandler.text, (int)request.responseCode, responseDateHeader);
             }
