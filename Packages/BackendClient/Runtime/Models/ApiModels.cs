@@ -714,6 +714,8 @@ namespace GameBackendModule.Models
     {
         public string userId;
         public int helpersCount;
+        /// <summary>Viewer hiện tại đã help request này chưa — client ẩn nút Help nếu true.</summary>
+        public bool helpedByMe;
         /// <summary>Thời điểm tạo request (ISO UTC) — dùng sort feed theo thời gian.</summary>
         public string createdAt;
         public string cooldownEndsAt;
