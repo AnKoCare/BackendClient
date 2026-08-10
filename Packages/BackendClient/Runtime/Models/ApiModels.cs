@@ -832,6 +832,20 @@ namespace GameBackendModule.Models
         public TeamActiveCardRequest[] activeRequests;
     }
 
+    /// <summary>
+    /// Response của endpoint feed gộp (GET /team/{id}/feed) — 1 request thay cho
+    /// chat + lives/status + cards/status (+ gifts). Dùng cho poll ở tải cao.
+    /// </summary>
+    [Serializable]
+    public class TeamFeedResponse
+    {
+        public TeamChatMessage[] chat;
+        public TeamLivesStatusResponse lives;
+        public TeamCardStatusResponse cards;
+        /// <summary>Chỉ có khi gọi kèm gifts=true; ngược lại null.</summary>
+        public TeamGiftData[] gifts;
+    }
+
     // Game Models (POST /api/v1/game/start — khớp StartGameDto server)
     [Serializable]
     public class StartGameRequest

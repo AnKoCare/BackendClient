@@ -89,6 +89,9 @@ namespace GameBackendModule.Services
 
         /// <summary>F3 — GET /team/:id/cards/status</summary>
         IEnumerator GetCardStatus(string teamId, Action<ApiResponse<TeamCardStatusResponse>> onSuccess, Action<ErrorResponse> onError);
+
+        /// <summary>Feed gộp (chat + lives + card [+ gifts]) — 1 request cho poll. GET /team/:id/feed</summary>
+        IEnumerator GetFeed(string teamId, int chatLimit, bool includeGifts, Action<ApiResponse<TeamFeedResponse>> onSuccess, Action<ErrorResponse> onError);
     }
 
     public class TeamService : ITeamService
@@ -269,6 +272,15 @@ namespace GameBackendModule.Services
         public IEnumerator GetCardStatus(string teamId, Action<ApiResponse<TeamCardStatusResponse>> onSuccess, Action<ErrorResponse> onError)
         {
             string endpoint = string.Format(ApiConstants.TEAM_CARD_STATUS_ENDPOINT, teamId);
+            yield return apiClient.Get(endpoint, onSuccess, onError);
+        }
+
+        public IEnumerator GetFeed(string teamId, int chatLimit, bool includeGifts, Action<ApiResponse<TeamFeedResponse>> onSuccess, Action<ErrorResponse> onError)
+        {
+            int safeLimit = UnityEngine.Mathf.Clamp(chatLimit, 1, 100);
+            string endpoint = string.Format(ApiConstants.TEAM_FEED_ENDPOINT, teamId)
+                + $"?chatLimit={safeLimit}&gifts={(includeGifts ? "true" : "false")}";
+            // Response là object top-level → JsonUtility parse trực tiếp (chat[] là field, không cần wrapper).
             yield return apiClient.Get(endpoint, onSuccess, onError);
         }
 

@@ -72,6 +72,9 @@ namespace GameBackendModule.Models
         public const string TEAM_CARD_GIVE_ENDPOINT = "/api/v1/team/{0}/cards/give";
         public const string TEAM_CARD_STATUS_ENDPOINT = "/api/v1/team/{0}/cards/status";
 
+        /// <summary>Feed gộp (chat + lives + card + gift) cho poll — tối ưu tải cao. {0}=teamId.</summary>
+        public const string TEAM_FEED_ENDPOINT = "/api/v1/team/{0}/feed";
+
         /// <summary>Level tối thiểu mở khóa Team (client kiểm tra trước khi gọi API).</summary>
         public const int TEAM_UNLOCK_LEVEL = 21;
 
