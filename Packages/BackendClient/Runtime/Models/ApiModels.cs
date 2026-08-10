@@ -714,6 +714,8 @@ namespace GameBackendModule.Models
     {
         public string userId;
         public int helpersCount;
+        /// <summary>Thời điểm tạo request (ISO UTC) — dùng sort feed theo thời gian.</summary>
+        public string createdAt;
         public string cooldownEndsAt;
     }
 
@@ -801,7 +803,6 @@ namespace GameBackendModule.Models
     [Serializable]
     public class GiveCardResponse
     {
-        public int totalGivers;
         public bool fulfilled;
     }
 
@@ -817,7 +818,8 @@ namespace GameBackendModule.Models
     {
         public string userId;
         public int cardIndex;
-        public int giversCount;
+        /// <summary>Thời điểm tạo request (ISO UTC) — dùng sort feed theo thời gian.</summary>
+        public string createdAt;
         public string cooldownEndsAt;
     }
 
