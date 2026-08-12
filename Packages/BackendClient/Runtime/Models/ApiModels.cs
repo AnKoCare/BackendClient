@@ -534,6 +534,8 @@ namespace GameBackendModule.Models
         public int totalContribution;
         /// <summary>F1 — World rank (số team teamScore cao hơn + 1).</summary>
         public int rank;
+        /// <summary>Độ tích cực tuần: "High" / "Med" / "Low" (server tính theo teamScore tăng trong tuần).</summary>
+        public string activity;
         public string leaderId;
         public string createdAt;
         public string updatedAt;
