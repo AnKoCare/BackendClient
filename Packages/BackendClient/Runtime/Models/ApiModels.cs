@@ -754,6 +754,8 @@ namespace GameBackendModule.Models
         public string countryCode;
         public TeamSearchPagination pagination;
         public TeamRankingItem[] teams;
+        /// <summary>Team của người gọi kèm hạng trong board này (null nếu không có team / ngoài board country).</summary>
+        public TeamRankingItem myTeam;
     }
 
     // ─── F2: Team Gift ──────────────────────────────────────────────────────────
