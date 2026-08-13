@@ -64,6 +64,10 @@ namespace GameBackendModule.Models
         public int TotalCoinEarn;
         public int BoosterUsed;
         public int SweetMealChampion;
+        public int FirstTryWin;
+        public int CollectionsDone;
+        public int CompleteTreetopMission;
+        public int CompleteNestQuest;
     }
 
     /// <summary>Player kèm auth (register / external-login).</summary>
