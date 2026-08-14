@@ -5,7 +5,13 @@ namespace SDK
 {
     public static class FirebaseLogger
     {
+#if CHEAT_ONLY
     private static bool IsShowing => true;
+#elif RELEASE_ONLY
+    private static bool IsShowing => false;
+#else
+    private static bool IsShowing => false;
+#endif
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Log(string message)
