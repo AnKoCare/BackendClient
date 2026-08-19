@@ -32,6 +32,30 @@ namespace GameBackendModule.Models
         public const string WEEKLY_CONTEST_DEV_END_WEEK_ENDPOINT = "/api/v1/weekly-contest/dev/end-week";
         public const string WEEKLY_CONTEST_DEV_KEY_HEADER = "X-Weekly-Contest-Dev-Key";
 
+        // Royal League — tất cả cần Bearer JWT (docs/ROYAL_LEAGUE_GDD.md)
+        /// <summary>GET — season đang chạy + kết quả season đã chốt, trong MỘT response.</summary>
+        public const string ROYAL_LEAGUE_STATUS_ENDPOINT = "/api/v1/royal-league/status";
+        /// <summary>POST — ghi nhận tham gia. Idempotent; không bắt buộc gọi trước khi submit Crown.</summary>
+        public const string ROYAL_LEAGUE_JOIN_ENDPOINT = "/api/v1/royal-league/join";
+        /// <summary>POST — cộng Crown sau khi thắng round. Idempotent theo idempotencyKey.</summary>
+        public const string ROYAL_LEAGUE_CROWNS_ENDPOINT = "/api/v1/royal-league/crowns";
+        /// <summary>GET ?sheetTable=&amp;limit=&amp;offset= — sheetTable BẮT BUỘC.</summary>
+        public const string ROYAL_LEAGUE_LEADERBOARD_ENDPOINT = "/api/v1/royal-league/leaderboard";
+        /// <summary>GET ?sheetTable=&amp;uid= — hạng của người chơi khác. Trả JSON null nếu uid không tham gia.</summary>
+        public const string ROYAL_LEAGUE_RANK_ENDPOINT = "/api/v1/royal-league/rank";
+        /// <summary>POST — ghi nhận đã nhận thưởng. Server KHÔNG trả nội dung thưởng.</summary>
+        public const string ROYAL_LEAGUE_CLAIM_ENDPOINT = "/api/v1/royal-league/claim";
+
+        /// <summary>Trần server cho GET /royal-league/leaderboard (bảng chỉ tính tới hạng 1000).</summary>
+        public const int ROYAL_LEAGUE_MAX_TOP_LIMIT = 1000;
+
+        // Mã lỗi 409 của Royal League — đọc từ ErrorResponse.code
+        public const string RL_ERR_UNKNOWN_SEASON = "UNKNOWN_SEASON";
+        public const string RL_ERR_SEASON_CLOSED = "SEASON_CLOSED";
+        public const string RL_ERR_SEASON_NOT_ACTIVE = "SEASON_NOT_ACTIVE";
+        public const string RL_ERR_SEASON_NOT_SETTLED = "SEASON_NOT_SETTLED";
+        public const string RL_ERR_RATE_LIMITED = "RATE_LIMITED";
+
         // Leaderboard (POST submit cần JWT; GET top/rank public)
         public const string LEADERBOARD_SUBMIT_ENDPOINT = "/api/v1/leaderboard/submit";
         public const string LEADERBOARD_TOP_ENDPOINT = "/api/v1/leaderboard/top";

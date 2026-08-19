@@ -20,6 +20,13 @@ namespace GameBackendModule.Models
         public string error;
         public int statusCode;
 		public string responseDate;
+
+        /// <summary>
+        /// Mã lỗi nghiệp vụ do server gửi kèm (hiện chỉ Royal League dùng):
+        /// UNKNOWN_SEASON, SEASON_CLOSED, SEASON_NOT_ACTIVE, SEASON_NOT_SETTLED, RATE_LIMITED.
+        /// Null với các endpoint khác — client nên branch theo field này thay vì so chuỗi message.
+        /// </summary>
+        public string code;
     }
 
     // Generic helpers
