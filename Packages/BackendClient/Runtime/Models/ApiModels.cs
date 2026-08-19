@@ -75,6 +75,10 @@ namespace GameBackendModule.Models
         public int CollectionsDone;
         public int CompleteTreetopMission;
         public int CompleteNestQuest;
+        /// <summary>Tổng LeaguePoint cộng dồn qua mọi mùa Royal League.</summary>
+        public int TotalLeaguePoint;
+        /// <summary>LeaguePoint cao nhất từng đạt trong MỘT mùa Royal League.</summary>
+        public int HighestLeaguePoint;
     }
 
     /// <summary>Player kèm auth (register / external-login).</summary>
