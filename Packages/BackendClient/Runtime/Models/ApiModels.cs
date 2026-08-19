@@ -376,6 +376,8 @@ namespace GameBackendModule.Models
         public int rank;
         public string uid;
         public int score;
+        /// <summary>Crown (TotalLeaguePoint) — tie-break khi cùng score.</summary>
+        public int leaguePoint;
         public string countryCode;
         public string board;
         public int total;
