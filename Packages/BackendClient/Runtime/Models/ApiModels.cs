@@ -487,6 +487,8 @@ namespace GameBackendModule.Models
         public int badgeId;
         public string description;
         public int minLevelRequired;
+        /// <summary>Crown tối thiểu để gia nhập (0 = không yêu cầu). Server chốt trần 2000.</summary>
+        public int minCupsRequired;
         /// <summary><see cref="TeamType.Open"/> hoặc <see cref="TeamType.Closed"/>.</summary>
         public string type;
         /// <summary>ISO alpha-2 viết thường. Bỏ trống → server lấy từ player creator.</summary>
@@ -499,6 +501,8 @@ namespace GameBackendModule.Models
         public int badgeId;
         public string description;
         public int minLevelRequired;
+        /// <summary>Crown tối thiểu để gia nhập (0 = không yêu cầu). Server chốt trần 2000.</summary>
+        public int minCupsRequired;
         public string type;
         /// <summary>ISO alpha-2 viết thường (Leader chỉnh).</summary>
         public string countryCode;
@@ -542,6 +546,8 @@ namespace GameBackendModule.Models
         public int badgeId;
         public string description;
         public int minLevelRequired;
+        /// <summary>Crown tối thiểu để gia nhập (0 = không yêu cầu).</summary>
+        public int minCupsRequired;
         public string type;
         /// <summary>F1 — ISO alpha-2 viết thường (null nếu chưa set).</summary>
         public string countryCode;
