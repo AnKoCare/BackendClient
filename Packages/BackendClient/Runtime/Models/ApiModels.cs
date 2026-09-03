@@ -527,6 +527,8 @@ namespace GameBackendModule.Models
         public string lastActiveAt;
         /// <summary>F4 — level live từ players.info.Level.</summary>
         public int level;
+        /// <summary>Crown lũy kế (players.info.TotalLeaguePoint), snapshot trên team_members.</summary>
+        public int leaguePoint;
         /// <summary>F4 — tổng số lần giúp đồng đội.</summary>
         public int contribution;
         public TeamUserRef user;
