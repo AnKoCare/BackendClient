@@ -66,6 +66,9 @@ namespace GameBackendModule.Models
         public int BadgeIndex;
         public int EffectNameIndex;
         public string TeamName;
+        /// <summary>Id team đang ở (UUID), rỗng = không ở team nào. Có trên bảng xếp hạng
+        /// người chơi để mở thẳng trang team mà không phải search theo tên.</summary>
+        public string TeamId;
         public int LogoTeamIndex;
         public int WinStreak;
         public int TotalCoinEarn;
