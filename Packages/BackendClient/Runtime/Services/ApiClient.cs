@@ -137,8 +137,13 @@ namespace GameBackendModule.Services
                     Debug.Log($"HTTP {method} {url} -> {(int)request.responseCode}\nBody: {TruncateForLog(responseText)}");
 #endif
 
-                    // JSON literal `null` (vd. GET /leaderboard/rank khi không có rank)
-                    if (string.Equals(responseText?.Trim(), "null", StringComparison.Ordinal)
+                    // Không có dữ liệu: JSON literal `null` (vd. GET /leaderboard/rank khi
+                    // chưa có rank) hoặc body RỖNG — Nest gửi body rỗng cho mọi handler trả
+                    // về null/undefined. Cả hai đều là câu trả lời hợp lệ "không có gì", phải
+                    // báo success + data null; để rơi xuống nhánh parse thì JsonUtility ném
+                    // lỗi với chuỗi rỗng và caller hiểu nhầm thành request hỏng.
+                    string bodyText = responseText?.Trim();
+                    if ((string.IsNullOrEmpty(bodyText) || string.Equals(bodyText, "null", StringComparison.Ordinal))
                         && !typeof(T).IsValueType
                         && typeof(T) != typeof(string))
                     {
